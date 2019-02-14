@@ -147,23 +147,23 @@ qui {
 		
 		if `r(existerror)' == 1 local olderrors "`olderrors' `oldFolder_`oldcounter'' {break}"
 		
-
+		//clean the new folders, mainly to make sure that when creating the folders with subfolders
+		noi clean_newfodlers , folders("`newFolders'")
+		local newFolders = `"`r(clean_newfolders)'"'
+		
+		
 		*Loop over the new folder(s) to be created in this folder
-		while "`newFolders'" != "" {
+		foreach newfolder of local newFolders {
 		
 			local ++newcounter
 			
-			*Parse one new fodler at the time
-			gettoken newFolder newFolders : newFolders, parse(",")
-			local newFolders = subinstr("`newFolders'" ,",","",1) //Remove parse char from gettoken remainder
-		
-			*Forward and back slash means the same but are not the same in string comparison
-			local newFolder_`oldcounter'_`newcounter' = trim(subinstr("`oldFolder_`oldcounter''/`newFolder'" , "\", "/", .))	
-			
 			*Test that the old folder is valid
-			noi newfolder_test , newfolder("`newFolder_`oldcounter'_`newcounter''")
+			noi newfolder_test , newfolder("`oldFolder_`oldcounter''/`newfolder'")
 			
-			if `r(existerror)' == 1 local newerrors "`newerrors' `newFolder_`oldcounter'_`newcounter'' {break}"
+			if `r(existerror)' == 1 local newerrors "`newerrors' `oldFolder_`oldcounter''/`newfolder' {break}"
+			
+			*Forward and back slash means the same but are not the same in string comparison
+			local newfolder_`oldcounter'_`newcounter' = "`newfolder'"	
 			
 		}
 		
