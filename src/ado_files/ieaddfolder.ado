@@ -119,7 +119,7 @@ qui {
 
 	***************************************************/
 	
-
+	*Set up locals
 	local oldcounter = 0
 	local olderrors = ""
 	local newerrors = ""
@@ -170,6 +170,7 @@ qui {
 		local oldFolder_`oldcounter'_newCount = `newcounter'
 	}
 	
+	*Display errors
 	if "`olderrors'`newerrors'" != "" {
 		
 		if "`olderrors'" != "" noi di as error "{phang}The following old folders to create folders in does not exist: {break} `olderrors'{p_end}"
@@ -185,14 +186,20 @@ qui {
 
 	***************************************************/
 	
+	*Loop over all old folders
 	forvalue oldcount = 1/`oldcounter' {
+		noi di ""
+		noi di "{pstd}In [`oldFolder_`oldcount''] the following folder(s) were/was created:{p_end}"
+		
+		*Loop over all new folders for this old folder
 		forvalue newcount = 1/`oldFolder_`oldcount'_newCount' {
-			noi di "newFolder_`oldcount'_`newcount'"
-			noi di "`newFolder_`oldcount'_`newcount''"
+			mkdir "`oldFolder_`oldcount''/`newfolder_`oldcount'_`newcount''"
+			noi di "{phang2}- `newfolder_`oldcount'_`newcount''{p_end}"
 		}
 		
 	}
 
+end
 
 
 **This function cleans the new folder list so that they can run on 
@@ -269,6 +276,7 @@ cap program drop 	split_folders
 		
 end
 
+*Test that the old folder in which new folders will be creaetd is valid 
 cap program drop 	oldfolder_test
 	program define	oldfolder_test, rclass
 	
@@ -286,6 +294,7 @@ cap program drop 	oldfolder_test
 	
 end
 
+*Test that new folders are valid
 cap program drop 	newfolder_test
 	program define	newfolder_test, rclass
 	
