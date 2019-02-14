@@ -195,7 +195,78 @@ qui {
 
 
 
+**This function cleans the new folder list so that they can run on 
+* multiple OS and being split up to all subfolders that needs to be created.
+cap program drop 	clean_newfodlers
+	program define	clean_newfodlers, rclass
+	
+		syntax , folders(string)
+		
+		*Loop over the new folder(s) to be created in this folder
+		while "`folders'" != "" {	
+		
+			*Parse one new fodler at the time
+			gettoken folder folders : folders, parse(",")
+			local folders = subinstr("`folders'" ,",","",1) //Remove parse char from gettoken remainder
 
+			*Forward and back slash means the same but are not the same in string comparison
+			local folder  = trim(subinstr("`folder'" , "\", "/", .))
+			
+			*Call the recursive command on each new folder to split up parent and subfolder
+			split_folders , folder("`folder'")
+			
+			*Add to local from previous newfolders
+			local clean_list = `"`clean_list' "' + trim(itrim(`"`r(parentfolders)' `r(subfolders)'"'))
+		
+		}
+		
+		*Clean the list from duplcate parents and from exessive spaces
+		local clean_list = trim(itrim(`"`clean_list'"'))
+		local clean_list : list uniq clean_list
+		
+		*Return prepared list to main command
+		return local clean_newfolders `"`clean_list'"'
+	 
+end	
+	
+*Recursive function that split parent folder and subfolders so that they can be creaeted in order
+cap program drop 	split_folders
+	program define	split_folders, rclass
+	
+		syntax , folder(string) [parent(string)]
+		
+		*Test if there is a slash in the folder
+		local slash_loc = strpos("`folder'", "/")
+		
+		*First test if no slash
+		if `slash_loc' == 0 {
+					
+			**There is no slash in this folder, so this is the end 
+			* of the recursive call, return this as a subfolder 
+			* and no new parent
+			return local subfolders `" "`parent'`folder'" "'
+			return local parentfolders ""
+		
+		} 
+		*There is a slash, so this folder has a subfolder
+		else {
+			
+			**There is a slash in this folder, this folder has 
+			* sub folders. Extract the parent folder and do a 
+			* recursive call on the rest of the folder
+			
+			*Extract the parent folder
+			local newparent = "`parent'" + substr("`folder'",1,`slash_loc'-1)
+			
+			*Remove the parent folder and repeat the recursive call
+			local folder = substr("`folder'",`slash_loc'+1,.)
+			split_folders , folder("`folder'") parent("`newparent'/")
+			
+			*Return the new parent and any subfolders from recursive calls
+			return local subfolders `" `r(subfolders)' "'
+			return local parentfolders `" "`newparent'" `r(parentfolders)' "' //New parent to the left so it is creaed first
+		}
+		
 end
 
 cap program drop 	oldfolder_test
