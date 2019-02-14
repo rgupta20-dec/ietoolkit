@@ -91,7 +91,7 @@ qui {
 		error 198
 	}
 	
-		*Creating a new project
+	*Creating a new project
 	if "`itemType'" == "project" {
 
 	}
@@ -107,14 +107,11 @@ qui {
 	else if "`itemType'" == "subfolder" {
 
 	}
-	
-
-}
 
 	*Create a global pointing to the main data folder
 	local projectFolder		"`projectfolder'"
-	local dataWorkFolder 		"$projectFolder/DataWork"
-	local encryptFolder 		"$dataWorkFolder/EncryptedData"
+	local dataWorkFolder 	"$projectFolder/DataWork"
+	local encryptFolder 	"$dataWorkFolder/EncryptedData"
 
 	/***************************************************
 
@@ -124,7 +121,6 @@ qui {
 	
 
 	local oldcounter = 0
-	
 	local olderrors = ""
 	local newerrors = ""
 	
@@ -181,19 +177,20 @@ qui {
 		
 		error 198
 	}
-	
+}
 	
 	/***************************************************
 
 		Start making updates to the project folder
 
 	***************************************************/
-
+	
 	forvalue oldcount = 1/`oldcounter' {
 		forvalue newcount = 1/`oldFolder_`oldcount'_newCount' {
 			noi di "newFolder_`oldcount'_`newcount'"
 			noi di "`newFolder_`oldcount'_`newcount''"
 		}
+		
 	}
 
 
@@ -236,5 +233,3 @@ cap program drop 	newfolder_test
 	}
 	
 end
-
-	
