@@ -55,13 +55,14 @@ qui {
 		*Open and compress the data file
 		cap use "`folder'/`file'", clear
 		
+		*File was possible to open, proceed as normal
 		if _rc == 0 {
 		
 			*Get file size of file before compressing
 			filesize , file("`folder'/`file'")
 			local before = `r(filesize)'
 
-			*Skip empty data sets
+			*Only include data sets wioth at least 1 observation
 			if _N > 0 {
 				
 				*Compress the data set
@@ -95,6 +96,8 @@ qui {
 			local sum_after 	= `sum_after' 	+ `after'
 			local sum_gain		= `sum_gain' 	+ `gain'
 		} 
+		
+		*File was not possible to open, perhaps illegal chars like ` and $ in name
 		else if _rc == 601 {
 		
 			noi di "FILE: `file' cannot be opened and is therforee skipped"
