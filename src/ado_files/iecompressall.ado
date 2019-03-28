@@ -50,26 +50,38 @@ qui {
 	*Loop over all files in this folder
 	foreach file of local flist {
 		
-		*Get file size of file before compressing
-		filesize , file("`folder'/`file'")
-		local before = `r(filesize)'
-	
-		*Open and compress the data file
-		use "`folder'/`file'", clear
-		compress
+			*Get file size of file before compressing
+			filesize , file("`folder'/`file'")
+			local before = `r(filesize)'
+
+			*Skip empty data sets
+			if _N > 0 {
+				
+				*Compress the data set
+				compress
 		
-		*Replace the original file
-		save "`folder'/`file'", replace
-		
-		*Get file size of file after compressing
-		filesize , file("`folder'/`file'")
-		local after = `r(filesize)'
-		
-		*Calculate desk space gain (unit is byte)
-		local gain = `before' - `after'
-		
-		noi di "FILE: `file' ; BEFORE: `before' ; AFTER: `after' ; GAIN: `gain'"
-		
+				*Replace the original file
+				save "`folder'/`file'", replace
+			
+			
+				*Get file size of file after compressing
+				filesize , file("`folder'/`file'")
+				local after = `r(filesize)'
+				
+				*Calculate desk space gain (unit is byte)
+				local gain = `before' - `after'
+				
+				noi di "FILE: `file' ; BEFORE: `before' ; AFTER: `after' ; GAIN: `gain'"
+			
+			} 
+			else {
+			
+				*Calculate desk space gain (unit is byte)
+				local gain = 0 
+				local after = `before'
+				
+				noi di "FILE: `file' cannot be compresses as it has no observations and is therefore skipped"
+			}
 		*Add the stats for this file
 		local sum_before	= `sum_before' 	+ `before'
 		local sum_after 	= `sum_after' 	+ `after'
