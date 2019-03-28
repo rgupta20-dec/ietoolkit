@@ -45,7 +45,7 @@ qui {
 	********************
 		
 	*Create a list of all the .dta files in this folder	
-	local flist : dir `"`folder'"' files "*.dta"
+	local flist : dir `"`folder'"' files "*.dta" ,respectcase
 	
 	noi di "In folder `folder':"
 	
