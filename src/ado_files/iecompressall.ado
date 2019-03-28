@@ -47,6 +47,8 @@ qui {
 	*Create a list of all the .dta files in this folder	
 	local flist : dir `"`folder'"' files "*.dta"
 	
+	noi di "In folder `folder':"
+	
 	*Loop over all files in this folder
 	foreach file of local flist {
 		
