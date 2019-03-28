@@ -50,6 +50,11 @@ qui {
 	*Loop over all files in this folder
 	foreach file of local flist {
 		
+		*Open and compress the data file
+		cap use "`folder'/`file'", clear
+		
+		if _rc == 0 {
+		
 			*Get file size of file before compressing
 			filesize , file("`folder'/`file'")
 			local before = `r(filesize)'
@@ -82,10 +87,17 @@ qui {
 				
 				noi di "FILE: `file' cannot be compresses as it has no observations and is therefore skipped"
 			}
-		*Add the stats for this file
-		local sum_before	= `sum_before' 	+ `before'
-		local sum_after 	= `sum_after' 	+ `after'
-		local sum_gain		= `sum_gain' 	+ `gain'
+		
+			*Add the stats for this file
+			local sum_before	= `sum_before' 	+ `before'
+			local sum_after 	= `sum_after' 	+ `after'
+			local sum_gain		= `sum_gain' 	+ `gain'
+		} 
+		else if _rc == 601 {
+		
+			noi di "FILE: `file' cannot be opened and is therforee skipped"
+			
+		}
 		
 	}	
 	
