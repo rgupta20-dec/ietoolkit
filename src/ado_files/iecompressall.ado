@@ -103,9 +103,17 @@ qui {
 			noi di "FILE: `file' cannot be opened and is therforee skipped"
 			
 		}
-		
-	}	
-	
+
+		*For all other error codes, throw and uncaught error.
+		else {
+
+			local rc = _rc
+			noi di "FILE: Uncaught error when opening file `file'. Error code: `rc'."
+
+		}
+
+	}
+
 	********************
 	*
 	*	If recursive is used apply to all sub-directories as well
