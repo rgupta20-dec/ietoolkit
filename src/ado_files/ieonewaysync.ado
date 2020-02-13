@@ -47,7 +47,6 @@
 			exit
 		}
 
-
 		*Get the name of the last folder in fromfolder()
 		local fromLastSlash  = strpos(strreverse(`"`fromfolderStd'"'),"/")
 		local fromLastFolder = substr(`"`fromfolderStd'"', (-1 * `fromLastSlash')+1 ,.)
@@ -75,40 +74,40 @@
 	capture program drop 	 ie1sync_syncfolder
 				  program define ie1sync_syncfolder , rclass
 
-					syntax ,  ffold(string) tfold(string)
+		syntax ,  ffold(string) tfold(string)
 
-					*If tfold does not exist, start by createing it
-					mata : st_numscalar("r(dirExist)", direxists("`tfold'"))
-					if (`r(dirExist)' == 0) mkdir "`tfold'"
+		*If tfold does not exist, start by createing it
+		mata : st_numscalar("r(dirExist)", direxists("`tfold'"))
+		if (`r(dirExist)' == 0) mkdir "`tfold'"
 
-					******************************
-					*	List all files and folders
+		******************************
+		*	List all files and folders
 
-					*List files, directories and other files
-					local dlist : dir `"`ffold'"' dirs  "*" , respectcase
-					local flist : dir `"`ffold'"' files "*"	, respectcase
-					local olist : dir `"`ffold'"' other "*"	, respectcase
+		*List files, directories and other files
+		local dlist : dir `"`ffold'"' dirs  "*" , respectcase
+		local flist : dir `"`ffold'"' files "*"	, respectcase
+		local olist : dir `"`ffold'"' other "*"	, respectcase
 
-					*Loop over all files and sync them
-					local allfiles "`flist' `olist'"
-					foreach file of local allfiles {
-						*Recursive call on each subfolder
-						noi ie1sync_syncfile , ffold("`ffold'") tfold("`tfold'") file("`file'")
-					}
+		*Loop over all files and sync them
+		local allfiles "`flist' `olist'"
+		foreach file of local allfiles {
+			*Recursive call on each subfolder
+			noi ie1sync_syncfile , ffold("`ffold'") tfold("`tfold'") file("`file'")
+		}
 
-					*Loop recursivily over all sub-folders
-					foreach dir of local dlist {
-						*Recursive call on each subfolder
-						noi ie1sync_syncfolder , ffold("`ffold'/`dir'") tfold("`tfold'/`dir'")
-					}
+		*Loop recursivily over all sub-folders
+		foreach dir of local dlist {
+			*Recursive call on each subfolder
+			noi ie1sync_syncfolder , ffold("`ffold'/`dir'") tfold("`tfold'/`dir'")
+		}
 	end
 
 	capture program drop 	 ie1sync_syncfile
 				  program define ie1sync_syncfile , rclass
 
-					syntax ,  ffold(string) tfold(string) file(string)
+		syntax ,  ffold(string) tfold(string) file(string)
 
-					copy "`ffold'/`file'" "`tfold'/`file'" , replace
-					noi di "Copying file `file'"
+		copy "`ffold'/`file'" "`tfold'/`file'" , replace
+		noi di "Copying file `file'"
 
 	end
