@@ -51,7 +51,7 @@
 		local fromLastSlash  = strpos(strreverse(`"`fromfolderStd'"'),"/")
 		local fromLastFolder = substr(`"`fromfolderStd'"', (-1 * `fromLastSlash')+1 ,.)
 
-		*Get the name of the last folder in fromfolder()
+		*Get the name of the last folder in tofolder()
 		local toLastSlash  = strpos(strreverse(`"`tofolderStd'"'),"/")
 		local toLastFolder = substr(`"`tofolderStd'"', (-1 * `toLastSlash')+1 ,.)
 
@@ -59,7 +59,7 @@
 		* otherwise there it is likely that the to paths point to differnet starting
 		* points in the two fodler trees that are to be compared.
 		if ("`fromLastFolder'" != "`toLastFolder'") {
-			noi di as error `"{phang}The last folder [`fromLastFolder'] in [fromfolder(`fromfolder')] is not identical to the last folder [`toLastFolder'] in [tofolder(`tofolder')]. This is not a technical restriction, but a built in test to mitage the risk of misspecification.{p_end}"'
+			noi di as error `"{phang}The last folder [`fromLastFolder'] in [fromfolder(`fromfolder')] is not identical to the last folder [`toLastFolder'] in [tofolder(`tofolder')]. This is not a technical restriction, but a built in test to mitage the risk of misspecifications.{p_end}"'
 			error 693
 			exit
 		}
@@ -72,7 +72,7 @@
 
 	*Sync all content of a folder, recursive call on subfolders
 	capture program drop 	 ie1sync_syncfolder
-				  program define ie1sync_syncfolder , rclass
+				  program define ie1sync_syncfolder
   qui {
 		syntax ,  ffold(string) tfold(string)
 
@@ -94,7 +94,7 @@
 		*Loop over all files and sync them
 		local allfiles "`flist' `olist'"
 		foreach file of local allfiles {
-			*Recursive call on each subfolder
+			*Sync each file
 			noi ie1sync_syncfile , ffold("`ffold'") tfold("`tfold'") file("`file'")
 		}
 
@@ -108,7 +108,7 @@
 	end
 
 	capture program drop 	 ie1sync_syncfile
-				  program define ie1sync_syncfile , rclass
+				  program define ie1sync_syncfile
 	qui {
 		syntax ,  ffold(string) tfold(string) file(string)
 
