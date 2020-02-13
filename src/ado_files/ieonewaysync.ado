@@ -73,12 +73,15 @@
 	*Sync all content of a folder, recursive call on subfolders
 	capture program drop 	 ie1sync_syncfolder
 				  program define ie1sync_syncfolder , rclass
-
+  qui {
 		syntax ,  ffold(string) tfold(string)
 
 		*If tfold does not exist, start by createing it
 		mata : st_numscalar("r(dirExist)", direxists("`tfold'"))
 		if (`r(dirExist)' == 0) mkdir "`tfold'"
+
+		noi di ""
+		noi di as result `"{pstd}Syncing folder `ffold'{p_end}"'
 
 		******************************
 		*	List all files and folders
@@ -100,14 +103,16 @@
 			*Recursive call on each subfolder
 			noi ie1sync_syncfolder , ffold("`ffold'/`dir'") tfold("`tfold'/`dir'")
 		}
+
+	}
 	end
 
 	capture program drop 	 ie1sync_syncfile
 				  program define ie1sync_syncfile , rclass
-
+	qui {
 		syntax ,  ffold(string) tfold(string) file(string)
 
+		noi di as result `"{pstd}- Syncing file `file' {p_end}"'
 		copy "`ffold'/`file'" "`tfold'/`file'" , replace
-		noi di "Copying file `file'"
-
+  }
 	end
