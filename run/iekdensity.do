@@ -77,7 +77,7 @@
 	iekdensity price, by(treatment_binary ) stat(p50) color(eltblue edkblue) ///
 					  effect effectformat(%9.0fc) 							 ///
 					  graphregion(color(white)) ylab(, nogrid)				 ///
-					  legend(cols(1))
+					  legend(position(2) ring(0) rows(3) region(color(white)))
 	
 	
 	* Categorical treatment
